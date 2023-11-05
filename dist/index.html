@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="manifest" href="manifest.json" />
+        <link rel="stylesheet" href="libs/onsenui.css">
+        <link rel="stylesheet" href="libs/onsen-css-components.min.css">
+        <link rel="stylesheet" href="page-stack.css">
+        <link rel="stylesheet" href="style.css">
+        <title>V Lap Counter</title>
+        <script defer src="libs/gapi.js"></script>
+        <script defer src="libs/gsi.js"></script>
+        <script defer src="index.js"></script>
+    </head>
+    <body id="root">
+        <script type="qweb">
+            <t t-name="main-page">
+                <Page t-props="{notifyPage, ...props}">
+                    <t t-set-slot="toolbar">
+                        <Toolbar>
+                            <t t-set-slot="center">Lap counter</t>
+                        </Toolbar>
+                    </t>
+                    <div>
+                        <Card>
+                            <div class="title" t-on-click="showGo">Ready?</div>
+                            <div class="content form">
+                                <div class="justified" t-on-click="showGo">
+                                    <t t-esc="message"></t>
+                                    </div>
+                                    <p></p>
+                                    <div class="buttons">
+                                        <ons-button t-on-click="showGo">Go!</ons-button>
+                                        <ons-button t-on-click="showSettings">Settings</ons-button>
+                                        <ons-button t-on-click="showSessions">Sessions</ons-button>
+                                    </div>
+                            </div>
+                        </Card>
+                    </div>
+                </Page>
+            </t>
+            <t t-name="go-page">
+                <Page t-props="{notifyPage, ...props}">
+                    <t t-set-slot="toolbar">
+                        <Toolbar>
+                            <t t-set-slot="left"><BackButton/></t>
+                            <t t-set-slot="center">Lap time</t>
+                        </Toolbar>
+                    </t>
+                    <div t-on-click="click" t-ref="content">
+                        <Card class="'go-page'">
+                            <div class="elapsed-lap-time" t-att-class="{red: isLate()}" t-esc="elapsedLapTime()"></div>
+                            <div class="totals" t-esc="`${elapsedTime()} ${this.state.lapsDone}/${this.settings.numberOfLaps} laps`"></div>
+                        </Card>
+                    </div>
+                </Page>
+            </t>
+            <t t-name="sessions-page">
+                <Page t-props="props">
+                    <t t-set-slot="toolbar">
+                        <Toolbar>
+                            <t t-set-slot="left"><BackButton/></t>
+                            <t t-set-slot="center">Sessions</t>
+                        </Toolbar>
+                    </t>
+                    <div class="sessions" t-on-click="click">
+                        <List>
+                            <t t-foreach="state.sessions" t-as="session" t-key="session_index">
+                                <ListItem t-on-click="() => this.showSession(session.id)">
+                                    <t t-set-slot="left">
+                                        <span class="session-date">
+                                            <t t-esc="session.date.toLocaleString()"/>
+                                        </span>
+                                        <span class="session-distance" t-esc="session.distance"></span>m
+                                    </t>
+                                    <t t-set-slot="right">
+                                        <span>
+                                            <span class="seconds"
+                                                  t-esc="formatTsShort(session.seconds * 1000)"></span>
+                                            <span class="delay-seconds"
+                                                  t-esc="formatTsShortSigned(session.delaySeconds * 1000)"></span>
+                                        </span>
+                                    </t>
+                                </ListItem>
+                            </t>
+                        </List>
+                    </div>
+                </Page>
+            </t>
+            <t t-name="session-page">
+                <Page t-props="props">
+                    <t t-set-slot="toolbar">
+                        <Toolbar>
+                            <t t-set-slot="left"><BackButton/></t>
+                            <t t-set-slot="center">Session</t>
+                            <t t-set-slot="right"><ToolbarButton t-if="!state.session.synced" t-on-click="sync">Sync</ToolbarButton></t>
+                        </Toolbar>
+                    </t>
+                    <div class="session" t-on-click="click">
+                        <List>
+                            <t t-foreach="state.session.laps" t-as="lap" t-key="lap_index">
+                                <ListItem>
+                                    <t t-set-slot="left">
+                                        <span class="lap-index" t-esc="lap_index + 1"></span>
+                                        <span class="acc-meters">
+                                            <t t-esc="lap.accMeters"/>
+                                        </span>m
+                                    </t>
+                                    <t t-set-slot="center">
+                                        <span>
+                                            <span class="seconds"
+                                                t-esc="formatTsShort(lap.seconds * 1000)"></span>
+                                            <span class="seconds"
+                                                t-esc="formatTsShortSigned(lap.delaySeconds * 1000)"></span>
+                                        </span>
+                                    </t>
+                                    <t t-set-slot="right">
+                                        <span class="seconds"
+                                            t-esc="formatTsShort(lap.accSeconds * 1000)"></span>
+                                        <span class="seconds"
+                                            t-esc="formatTsShortSigned(lap.accDelaySeconds * 1000)"></span>
+                                    </t>
+                                </ListItem>
+                            </t>
+                        </List>
+                    </div>
+                </Page>
+            </t>
+            <t t-name="settings-page">
+                <Page t-props="props">
+                    <t t-set-slot="toolbar">
+                        <Toolbar>
+                            <t t-set-slot="center">Settings</t>
+                        </Toolbar>
+                    </t>
+                    <div class="form settings-page">
+                        <Card>
+                            <div class="container">
+                                <p>Pool length</p>
+                                <!-- t-model requiere parchear
+                                     node_modules/@odoo/owl/dist/owl.es.js para que
+                                     al procesar attr.startsWith("t-model") acepte
+                                     también ons-input -->
+                                <p><ons-input
+                                       t-model="this.poolMeters"
+                                       t-att-value="this.poolMeters"
+                                       type="number"
+                                       step="1"></ons-input></p>
+
+                                <p>Number of laps</p>
+                                <p><ons-input
+                                       t-model="this.numberOfLaps"
+                                       t-att-value="this.numberOfLaps"
+                                       type="number"
+                                       step="1"></ons-input></p>
+
+                                <p>Total distance</p>
+                                <p><ons-input
+                                       t-att-value="totalDistance"
+                                       type="number"
+                                       step="1"
+                                       readonly="1"></ons-input></p>
+
+                                <p>Time / 100m</p>
+                                <p><ons-input
+                                       t-model="this.minutes100m"
+                                       t-att-value="minutes100m"
+                                       class="time-piece"
+                                       type="number"
+                                       step="1"></ons-input>'<ons-input
+                                       t-model="this.seconds100m"
+                                       t-att-value="seconds100m"
+                                       type="number"
+                                       class="time-piece"
+                                       step="1"></ons-input>"</p>
+
+                                <p>Total time</p>
+                                <p><ons-input
+                                       t-att-value="Math.floor(totalTimeSeconds / 60)"
+                                       class="time-piece"
+                                       type="number"
+                                       readonly="1"></ons-input>'<ons-input
+                                       t-att-value="totalTimeSeconds % 60"
+                                       type="number"
+                                       class="time-piece"
+                                       readonly="1"></ons-input>"</p>
+
+                                <p>Start delay</p>
+                                <p><ons-input
+                                       t-model="state.startDelaySeconds"
+                                       t-att-value="state.startDelaySeconds"
+                                       class="time-piece"
+                                       step="1"></ons-input>"</p>
+                            </div>
+                            <div class="buttons">
+                                <ons-button t-on-click="cancelSettings">Cancel</ons-button>
+                                <ons-button t-on-click="saveSettings">Save</ons-button>
+                            </div>
+                        </Card>
+                    </div>
+                </Page>
+            </t>
+        </script>
+    </body>
+</html>

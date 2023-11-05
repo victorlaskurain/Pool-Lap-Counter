@@ -1,0 +1,7 @@
+platforms
+plugins
+node_modules
+www/js/index.js
+dist/index.*
+dist/sw.*
+.linted

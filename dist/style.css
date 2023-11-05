@@ -1,0 +1,122 @@
+/* hide arrows on number input */
+/* https://stackoverflow.com/questions/3790935/can-i-hide-the-html5-number-input-s-spin-box */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  -moz-appearance:textfield;
+}
+
+qweb {
+  display: none;
+}
+
+/*
+ * Session page
+ */
+.sessions .session-distance {
+  display: inline-block;
+  width: 3em;
+  text-align: right;
+}
+
+.sessions .seconds, .sessions .delay-seconds {
+  display: inline-block;
+  width: 3em;
+  text-align: right;
+}
+
+.sessions .session-date {
+  display: inline-block;
+  width: 11em;
+}
+
+/*
+ * Session page
+ */
+.session span {
+  text-align: right;
+  display: inline-block;
+}
+.session .lap-index {
+  width: 1em;
+}
+.session .acc-meters {
+  width: 3em;
+}
+.session .seconds {
+  width: 4em;
+}
+.session .center>span {
+  margin: auto;
+}
+
+/*
+ * Settings page
+ */
+.settings-page ons-input input {
+  text-align: right;
+}
+
+.settings-page .time-piece {
+  width: 2em;
+}
+
+/*
+ * Go page
+ */
+ons-card.go-page {
+  height: calc(100vh - 72px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+ons-card.go-page.card {
+  height: calc(100vh - 60px);
+}
+ons-card.go-page.card.card--material {
+  height: calc(100vh - 72px);
+}
+.go-page .elapsed-lap-time {
+  font-size: 25cqw;
+}
+.go-page .totals {
+  position: absolute;
+  bottom: 1em;
+  right: 1em;
+}
+.red {
+  color: red;
+}
+
+/*
+ * Forms
+ */
+.form .container {
+  display: grid;
+  grid-template-columns: auto 10fr;
+  grid-gap: 0.5em;
+  align-content: start;
+  align-items: baseline;
+}
+@media (min-aspect-ratio: 1.0) {
+  .form .container {
+    grid-template-columns: auto 10fr auto 10fr;
+  }
+}
+
+.form .buttons {
+  text-align: right;
+}
+.form .buttons > * {
+  margin-left: 1em;
+}
+
+.centered {
+  text-align: center;
+}
+.justified {
+  text-align: justify;
+}

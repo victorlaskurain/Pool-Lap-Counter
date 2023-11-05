@@ -1,0 +1,44 @@
+{
+    "name": "typescript-base",
+    "version": "1.0.0",
+    "description": "",
+    "dependencies": {
+        "@odoo/owl": "^2.2.9",
+        "onsenui": "^2.12.8",
+        "setimmediate": "^1.0.5",
+        "ts-loader": "^9.5.0",
+        "uuid": "^9.0.1"
+    },
+    "devDependencies": {
+        "@types/gapi": "^0.0.47",
+        "@types/gapi.client.sheets-v4": "^0.0.4",
+        "@types/google.accounts": "^0.0.14",
+        "@types/jasmine": "^5.1.1",
+        "@types/uuid": "^9.0.7",
+        "@typescript-eslint/eslint-plugin": "^6.9.1",
+        "eslint": "^8.53.0",
+        "eslint-config-prettier": "^9.0.0",
+        "eslint-config-standard-with-typescript": "^39.1.1",
+        "eslint-plugin-import": "^2.29.0",
+        "eslint-plugin-n": "^16.2.0",
+        "eslint-plugin-prettier": "^5.0.1",
+        "eslint-plugin-promise": "^6.1.1",
+        "jasmine": "^5.1.0",
+        "karma-chrome-launcher": "^3.2.0",
+        "karma-jasmine": "^5.1.0",
+        "karma-typescript": "^5.5.4",
+        "prettier": "3.0.3",
+        "typescript": "^5.2.2",
+        "webpack-cli": "^5.1.4",
+        "webpack-dev-server": "^4.15.1"
+    },
+    "scripts": {
+        "build": "webpack --config webpack.config.js",
+        "lint": "eslint --fix src/**/*.{js,ts,tsx} test/*.{ts,js}",
+        "serve": "webpack serve",
+        "test": "env CHROME_BIN=chromium-browser karma start",
+        "patch": "sed -i.bk 's/\"input\", \"select\", \"textarea\"/\"input\", \"select\", \"textarea\", \"ons-input\"/' node_modules/@odoo/owl/dist/owl.es.js"
+    },
+    "author": "",
+    "license": "MIT"
+}
