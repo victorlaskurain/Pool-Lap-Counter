@@ -45,7 +45,7 @@ export class MainPage extends Component {
         const keydownHandler = (evt: KeyboardEvent): void => {
             console.log("main-page keydown");
             if (evt.key === "ArrowRight") {
-                this.showGo();
+                this.showGo(true);
             }
         };
         onMounted(() => {
@@ -64,9 +64,9 @@ export class MainPage extends Component {
         this.page = page;
     }
 
-    showGo(): void {
+    showGo(ignoreClicks: boolean): void {
         void utils.wakeLock();
-        this.env.navigator.pushPage(GoPage);
+        this.env.navigator.pushPage(GoPage, { ignoreClicks });
     }
 
     showSessions(): void {

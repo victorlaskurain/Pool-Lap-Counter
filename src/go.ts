@@ -32,13 +32,15 @@ export class GoPage extends Component {
     page: Page;
     db: Db;
     synced = Promise.resolve(true);
+    ignoreClicks = false;
 
     setup(): void {
+        this.ignoreClicks = this.props.ignoreClicks;
         this.db = this.env.db;
         const keydownHandler = (evt: KeyboardEvent): void => {
             switch (evt.key) {
                 case "ArrowRight":
-                    void this.click();
+                    void this.recordLap();
                     break;
                 case "ArrowLeft":
                     this.env.navigator.popPage();
@@ -110,6 +112,13 @@ export class GoPage extends Component {
     }
 
     async click(): Promise<void> {
+        if (this.ignoreClicks) {
+            return;
+        }
+        await this.recordLap();
+    }
+
+    async recordLap(): Promise<void> {
         if (!this.state.running) {
             return;
         }

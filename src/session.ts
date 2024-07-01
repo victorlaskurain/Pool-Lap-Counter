@@ -36,7 +36,7 @@ export class SessionPage extends Component {
             const session = await db.txn().getSessionDetailed(this.sessionId);
             this.state.session = session;
         };
-        syncSession(this.env.db, this.sessionId).then(loadLaps);
+        void syncSession(this.env.db, this.sessionId).then(loadLaps);
         onWillStart(loadLaps);
         onWillUpdateProps(loadLaps);
     }

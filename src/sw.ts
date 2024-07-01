@@ -1,4 +1,4 @@
-export const VERSION = "1.2.0";
+export const VERSION = "1.2.1";
 const CACHE_NAME = "v-pool-laps";
 const CONTENT_TO_CACHE = [
     "./bundle.js",
